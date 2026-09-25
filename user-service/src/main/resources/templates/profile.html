@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль — Task Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- DEBUG (временно) -->
+<div style="background: #ffffcc; padding: 10px; margin: 10px; border: 1px solid #cccc00;">
+    <p>DEBUG auth: <span th:text="${#authentication}">auth</span></p>
+    <p>DEBUG roles: <span th:text="${#authentication?.authorities}">roles</span></p>
+    <p>DEBUG username: <span th:text="${#authentication?.name}">name</span></p>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+    <div class="header-container">
+        <a href="/" class="logo">📋 Task Tracker</a>
+        <nav class="nav">
+            <a th:href="@{/profile}" class="nav-link">Профиль</a>
+
+            <!-- ✅ Только для ADMIN -->
+            <a sec:authorize="hasRole('ADMIN')"
+               th:href="@{/admin/users}" class="nav-link">Админ-панель</a>
+
+            <a th:href="@{/logout}" class="nav-link nav-link-logout">Выйти</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<div class="main-container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h3>Меню</h3>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/profile}">👤 Мой профиль</a></li>
+
+                <!-- ✅ Только для ADMIN -->
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/users}">👥 Пользователи</a>
+                </li>
+
+                <li><a th:href="@{/projects}">📁 Проекты</a></li>
+                <li><a th:href="@{/tasks}">✅ Задачи</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- ===== CONTENT ===== -->
+    <main class="content">
+
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <span th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</span>
+            </div>
+            <div class="profile-header-info">
+                <h1 th:text="${user.fullName != null ? user.fullName : user.username}">Имя</h1>
+                <p class="profile-username" th:text="'@' + ${user.username}">@username</p>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <h2>Информация</h2>
+            <table class="profile-table">
+                <tr>
+                    <td class="label">Логин:</td>
+                    <td th:text="${user.username}">username</td>
+                </tr>
+                <tr>
+                    <td class="label">Email:</td>
+                    <td th:text="${user.email}">email</td>
+                </tr>
+                <tr>
+                    <td class="label">Полное имя:</td>
+                    <td th:text="${user.fullName != null ? user.fullName : '—'}">fullName</td>
+                </tr>
+                <tr>
+                    <td class="label">Роль:</td>
+                    <td>
+                        <span class="badge badge-role" th:text="${user.roleName}">role</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">Подроль:</td>
+                    <td>
+                        <span class="badge badge-subrole"
+                              th:text="${user.subRoleName != null ? user.subRoleName : '—'}">subRole</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">Статус:</td>
+                    <td>
+                        <span class="badge badge-status"
+                              th:classappend="' badge-' + ${#strings.toLowerCase(user.status)}"
+                              th:text="${user.statusName}">status</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">Дата регистрации:</td>
+                    <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy HH:mm')}">createdAt</td>
+                </tr>
+            </table>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

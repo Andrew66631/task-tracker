@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: 'Task Tracker'">Task Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+    <div class="header-container">
+        <a href="/" class="logo">📋 Task Tracker</a>
+        <nav class="nav">
+            <a th:href="@{/profile}" class="nav-link">Профиль</a>
+            <a th:href="@{/logout}" class="nav-link nav-link-logout">Выйти</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<div class="main-container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h3>Меню</h3>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/profile}">👤 Мой профиль</a></li>
+
+                <!-- ✅ Только для ADMIN -->
+                <li th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                    <a th:href="@{/admin/users}">👥 Пользователи</a>
+                </li>
+
+                <li><a th:href="@{/projects}">📁 Проекты</a></li>
+                <li><a th:href="@{/tasks}">✅ Задачи</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- ===== CONTENT ===== -->
+    <main class="content" th:insert="${content}">
+        <!-- Сюда вставляется контент страницы -->
+    </main>
+
+</div>
+
+</body>
+</html>

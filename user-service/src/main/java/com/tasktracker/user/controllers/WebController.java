@@ -1,4 +1,4 @@
-package com.tasktracker.user.controller;
+package com.tasktracker.user.controllers;
 
 import com.tasktracker.user.dto.AuthResponse;
 import com.tasktracker.user.dto.LoginRequest;

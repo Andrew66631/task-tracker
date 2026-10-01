@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Профиль — Task Tracker</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<!-- DEBUG (временно) -->
-<div style="background: #ffffcc; padding: 10px; margin: 10px; border: 1px solid #cccc00;">
-    <p>DEBUG auth: <span th:text="${#authentication}">auth</span></p>
-    <p>DEBUG roles: <span th:text="${#authentication?.authorities}">roles</span></p>
-    <p>DEBUG username: <span th:text="${#authentication?.name}">name</span></p>
-</div>
 
 <!-- ===== HEADER ===== -->
 <header class="header">
@@ -22,8 +15,7 @@
             <a th:href="@{/profile}" class="nav-link">Профиль</a>
 
             <!-- ✅ Только для ADMIN -->
-            <a sec:authorize="hasRole('ADMIN')"
-               th:href="@{/admin/users}" class="nav-link">Админ-панель</a>
+            <a th:if="${isAdmin}" th:href="@{/admin}" class="nav-link">Админ-панель</a>
 
             <a th:href="@{/logout}" class="nav-link nav-link-logout">Выйти</a>
         </nav>
@@ -41,8 +33,8 @@
                 <li><a th:href="@{/profile}">👤 Мой профиль</a></li>
 
                 <!-- ✅ Только для ADMIN -->
-                <li sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin/users}">👥 Пользователи</a>
+                <li th:if="${isAdmin}">
+                    <a th:href="@{/admin}">👥 Админ-панель</a>
                 </li>
 
                 <li><a th:href="@{/projects}">📁 Проекты</a></li>

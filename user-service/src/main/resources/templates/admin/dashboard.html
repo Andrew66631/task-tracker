@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ-панель — Task Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+    <div class="header-container">
+        <a href="/" class="logo">📋 Task Tracker</a>
+        <nav class="nav">
+            <a th:href="@{/profile}" class="nav-link">Профиль</a>
+            <a th:href="@{/admin}" class="nav-link">Админ-панель</a>
+            <a th:href="@{/logout}" class="nav-link nav-link-logout">Выйти</a>
+        </nav>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<div class="main-container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h3>Админ-панель</h3>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/admin}">📊 Дашборд</a></li>
+                <li><a th:href="@{/admin/users}">👥 Все пользователи</a></li>
+                <li><a th:href="@{/admin/users/pending}">⏳ На одобрении</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-section">
+            <h3>Основное</h3>
+            <ul class="sidebar-menu">
+                <li><a th:href="@{/profile}">👤 Мой профиль</a></li>
+                <li><a th:href="@{/projects}">📁 Проекты</a></li>
+                <li><a th:href="@{/tasks}">✅ Задачи</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- ===== CONTENT ===== -->
+    <main class="content">
+
+        <h1>Админ-панель</h1>
+
+        <div class="dashboard-cards">
+            <div class="dashboard-card">
+                <div class="dashboard-card-icon">⏳</div>
+                <div class="dashboard-card-content">
+                    <h3>На одобрении</h3>
+                    <p class="dashboard-card-number" th:text="${pendingCount}">0</p>
+                    <a th:href="@{/admin/users/pending}" class="btn-small btn-approve">Перейти</a>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="dashboard-card-icon">👥</div>
+                <div class="dashboard-card-content">
+                    <h3>Всего пользователей</h3>
+                    <p class="dashboard-card-number" th:text="${totalCount}">0</p>
+                    <a th:href="@{/admin/users}" class="btn-small btn-approve">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

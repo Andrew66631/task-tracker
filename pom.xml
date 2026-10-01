@@ -39,8 +39,9 @@
 
     <!-- Список всех 5 микросервисов -->
     <modules>
+        <module>common-events</module>
         <module>user-service</module>
-<!--        <module>project-service</module>-->
+        <module>project-service</module>
         <module>task-service</module>
 <!--        <module>notification-service</module>-->
 <!--        <module>analytics-service</module>-->

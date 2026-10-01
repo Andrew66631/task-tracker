@@ -1,6 +1,5 @@
 package com.tasktracker.user.controllers;
 
-import com.tasktracker.user.dto.ChangeRoleRequest;
 import com.tasktracker.user.dto.UserResponse;
 import com.tasktracker.user.entity.enums.EmployeeSubRole;
 import com.tasktracker.user.entity.enums.UserRole;
@@ -21,19 +20,45 @@ public class AdminController {
     private final UserService userService;
 
     /**
-     * Страница админ-панели со списком pending-пользователей.
+     * Главная страница админ-панели (дашборд).
      */
-    @GetMapping("/users")
-    public String usersPage(Model model) {
+    @GetMapping
+    public String adminDashboard(Model model) {
         List<UserResponse> pendingUsers = userService.getPendingUsers();
         List<UserResponse> allUsers = userService.getAllUsers();
 
-        model.addAttribute("pendingUsers", pendingUsers);
+        model.addAttribute("pendingCount", pendingUsers.size());
+        model.addAttribute("totalCount", allUsers.size());
+
+        return "admin/dashboard";
+    }
+
+    /**
+     * Список всех пользователей.
+     */
+    @GetMapping("/users")
+    public String allUsersPage(Model model) {
+        List<UserResponse> allUsers = userService.getAllUsers();
+
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("roles", UserRole.values());
         model.addAttribute("subRoles", EmployeeSubRole.values());
 
         return "admin/users";
+    }
+
+    /**
+     * Пользователи, ожидающие одобрения.
+     */
+    @GetMapping("/users/pending")
+    public String pendingUsersPage(Model model) {
+        List<UserResponse> pendingUsers = userService.getPendingUsers();
+
+        model.addAttribute("pendingUsers", pendingUsers);
+        model.addAttribute("roles", UserRole.values());
+        model.addAttribute("subRoles", EmployeeSubRole.values());
+
+        return "admin/pending";
     }
 
     /**
@@ -49,7 +74,7 @@ public class AdminController {
             userService.changeRole(id, role, subRole);
         }
         userService.approveUser(id, null);
-        return "redirect:/admin/users";
+        return "redirect:/admin/users/pending";
     }
 
     /**
@@ -58,7 +83,7 @@ public class AdminController {
     @PostMapping("/users/{id}/reject")
     public String rejectUser(@PathVariable UUID id) {
         userService.rejectUser(id, null);
-        return "redirect:/admin/users";
+        return "redirect:/admin/users/pending";
     }
 
     /**

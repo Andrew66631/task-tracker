@@ -1,0 +1,30 @@
+package com.tasktracker.project.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateProjectRequest {
+
+    @NotBlank(message = "Project name is required")
+    @Size(max = 255, message = "Name must be less than 255 characters")
+    private String name;
+
+    @Size(max = 5000, message = "Description must be less than 5000 characters")
+    private String description;
+
+    private UUID organizationId;
+
+    @NotNull(message = "Owner ID is required")
+    private UUID ownerId;
+}

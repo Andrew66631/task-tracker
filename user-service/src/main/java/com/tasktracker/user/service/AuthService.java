@@ -7,6 +7,7 @@ import com.tasktracker.user.entity.User;
 import com.tasktracker.user.entity.enums.UserRole;
 import com.tasktracker.user.entity.enums.UserStatus;
 import com.tasktracker.user.exception.UserAlreadyExistsException;
+import com.tasktracker.user.kafka.UserEventPublisher;
 import com.tasktracker.user.mapper.UserMapper;
 import com.tasktracker.user.repository.UserRepository;
 import com.tasktracker.user.security.JwtService;
@@ -19,6 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -28,6 +32,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final UserEventPublisher userEventPublisher;   // ← НОВОЕ
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -43,15 +48,23 @@ public class AuthService {
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .fullName(request.getFullName())
-                .role(UserRole.USER)              // ← ВСЕГДА USER по умолчанию
-                .subRole(null)                    // ← подроль не назначается
-                .status(UserStatus.PENDING)       // ← ждёт одобрения
+                .role(UserRole.USER)
+                .subRole(null)
+                .status(UserStatus.PENDING)
                 .build();
 
         User saved = userRepository.save(user);
 
+        // ✅ Публикуем событие через outbox (в той же транзакции)
+        userEventPublisher.publishUserCreated(saved);
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(saved.getUsername());
-        String token = jwtService.generateToken(userDetails);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", saved.getId().toString());
+        claims.put("role", saved.getRole().name());
+
+        String token = jwtService.generateToken(claims, userDetails);
 
         return AuthResponse.builder()
                 .token(token)
@@ -69,7 +82,12 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        String token = jwtService.generateToken(userDetails);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId().toString());
+        claims.put("role", user.getRole().name());
+
+        String token = jwtService.generateToken(claims, userDetails);
 
         return AuthResponse.builder()
                 .token(token)

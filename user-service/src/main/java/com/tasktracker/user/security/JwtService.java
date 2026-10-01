@@ -23,31 +23,19 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    /**
-     * Извлечь username из токена.
-     */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    /**
-     * Извлечь конкретный claim.
-     */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    /**
-     * Сгенерировать токен для пользователя.
-     */
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    /**
-     * Сгенерировать токен с дополнительными claims.
-     */
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .claims(extraClaims)
@@ -58,9 +46,6 @@ public class JwtService {
                 .compact();
     }
 
-    /**
-     * Проверить токен.
-     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);

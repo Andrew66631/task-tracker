@@ -11,8 +11,8 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "roleName", expression = "java(user.getRole().getDisplayName())")
+    @Mapping(target = "roleName", expression = "java(user.getRole() != null ? user.getRole().getDisplayName() : null)")
     @Mapping(target = "subRoleName", expression = "java(user.getSubRole() != null ? user.getSubRole().getDisplayName() : null)")
-    @Mapping(target = "statusName", expression = "java(user.getStatus().getDisplayName())")
+    @Mapping(target = "statusName", expression = "java(user.getStatus() != null ? user.getStatus().getDisplayName() : null)")
     UserResponse toResponse(User user);
 }

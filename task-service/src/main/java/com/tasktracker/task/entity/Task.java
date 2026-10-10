@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * JPA-сущность задачи.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,7 +20,7 @@ import java.util.UUID;
 @Table(name = "tasks", indexes = {
         @Index(name = "idx_tasks_status", columnList = "status"),
         @Index(name = "idx_tasks_priority", columnList = "priority"),
-        @Index(name = "idx_tasks_group_id", columnList = "group_id"),
+        @Index(name = "idx_tasks_project_id", columnList = "project_id"),
         @Index(name = "idx_tasks_created_by", columnList = "created_by")
 })
 public class Task {
@@ -51,8 +48,8 @@ public class Task {
     @Column(name = "task_type", nullable = false, length = 50)
     private TaskType taskType;
 
-    @Column(name = "group_id")
-    private UUID groupId;
+    @Column(name = "project_id")
+    private UUID projectId;
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;

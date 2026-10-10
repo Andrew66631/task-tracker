@@ -10,10 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-/**
- * DTO для обновления задачи.
- * Все поля опциональны — обновляются только те, что не null.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -30,5 +26,5 @@ public class UpdateTaskRequest {
 
     private TaskType taskType;
 
-    private UUID groupId;
+    private UUID projectId;
 }

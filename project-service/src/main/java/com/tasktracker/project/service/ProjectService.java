@@ -7,6 +7,7 @@ import com.tasktracker.project.entity.Project;
 import com.tasktracker.project.entity.enums.ProjectStatus;
 import com.tasktracker.project.exception.ProjectAccessDeniedException;
 import com.tasktracker.project.exception.ProjectNotFoundException;
+import com.tasktracker.project.kafka.ProjectEventPublisher;
 import com.tasktracker.project.mapper.ProjectMapper;
 import com.tasktracker.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final ProjectEventPublisher projectEventPublisher;
 
     @Transactional(readOnly = true)
     public List<ProjectResponse> getAllProjects() {
@@ -53,6 +55,10 @@ public class ProjectService {
         project.setOwnerId(ownerId);
 
         Project saved = projectRepository.save(project);
+
+        // ✅ Публикуем событие через outbox
+        projectEventPublisher.publishProjectCreated(saved);
+
         return ProjectMapper.INSTANCE.toResponse(saved);
     }
 

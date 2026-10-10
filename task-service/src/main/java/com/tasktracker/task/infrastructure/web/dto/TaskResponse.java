@@ -26,7 +26,7 @@ public class TaskResponse {
     private String priorityName;
     private TaskType taskType;
     private String taskTypeName;
-    private UUID groupId;
+    private UUID projectId;
     private UUID createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -8,6 +8,7 @@ import com.tasktracker.task.infrastructure.web.dto.CreateTaskRequest;
 import com.tasktracker.task.infrastructure.web.dto.TaskResponse;
 import com.tasktracker.task.infrastructure.web.dto.UpdateTaskRequest;
 import com.tasktracker.task.infrastructure.web.mapper.TaskMapper;
+import com.tasktracker.task.kafka.TaskEventPublisher;   // ← НОВОЕ
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final TaskEventPublisher taskEventPublisher;   // ← НОВОЕ
 
     @Transactional(readOnly = true)
     public List<TaskResponse> getAllTasks() {
@@ -46,6 +48,10 @@ public class TaskService {
     public TaskResponse createTask(CreateTaskRequest request) {
         Task task = TaskMapper.INSTANCE.toEntity(request);
         Task saved = taskRepository.save(task);
+
+        // ✅ Публикуем событие через outbox
+        taskEventPublisher.publishTaskCreated(saved);
+
         return TaskMapper.INSTANCE.toResponse(saved);
     }
 
@@ -54,7 +60,6 @@ public class TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
 
-        // ✅ Обновляем ТОЛЬКО те поля, которые есть в UpdateTaskRequest
         if (request.getTitle() != null) {
             task.setTitle(request.getTitle());
         }
@@ -67,24 +72,19 @@ public class TaskService {
         if (request.getTaskType() != null) {
             task.setTaskType(request.getTaskType());
         }
-        if (request.getGroupId() != null) {
-            task.setGroupId(request.getGroupId());
+        if (request.getProjectId() != null) {           // ← ИЗМЕНЕНО
+            task.setProjectId(request.getProjectId());  // ← ИЗМЕНЕНО
         }
-        // ❌ Строка с request.getStatus() УДАЛЕНА — статус меняется отдельно
 
         Task updated = taskRepository.save(task);
         return TaskMapper.INSTANCE.toResponse(updated);
     }
 
-    /**
-     * Смена статуса — отдельная операция.
-     */
     @Transactional
     public TaskResponse changeStatus(UUID id, TaskStatus newStatus) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
 
-        // TODO: здесь можно добавить проверку переходов статусов
         task.setStatus(newStatus);
 
         Task updated = taskRepository.save(task);

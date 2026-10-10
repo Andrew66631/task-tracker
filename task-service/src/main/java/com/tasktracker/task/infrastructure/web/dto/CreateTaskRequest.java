@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-/**
- * DTO для создания новой задачи.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -34,7 +31,7 @@ public class CreateTaskRequest {
     @NotNull(message = "Тип задачи обязателен")
     private TaskType taskType;
 
-    private UUID groupId;
+    private UUID projectId;
 
     @NotNull(message = "ID автора обязателен")
     private UUID createdBy;

@@ -10,59 +10,35 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Репозиторий для работы с задачами.
- */
 @Repository
 public interface TaskRepository extends JpaRepository<Task, UUID> {
 
-    /**
-     * Найти все задачи с определённым статусом.
-     */
     List<Task> findByStatus(TaskStatus status);
 
-    /**
-     * Найти все задачи с определённым приоритетом.
-     */
     List<Task> findByPriority(TaskPriority priority);
 
-    /**
-     * Найти все задачи с определённым типом.
-     */
     List<Task> findByTaskType(TaskType taskType);
 
     /**
-     * Найти все задачи в группе.
+     * Найти все задачи в проекте.
      */
-    List<Task> findByGroupId(UUID groupId);
+    List<Task> findByProjectId(UUID projectId);   // ← ИЗМЕНЕНО
 
-    /**
-     * Найти все задачи, созданные пользователем.
-     */
     List<Task> findByCreatedBy(UUID createdBy);
 
-    /**
-     * Найти все задачи с определённым статусом и приоритетом.
-     */
     List<Task> findByStatusAndPriority(TaskStatus status, TaskPriority priority);
 
     /**
-     * Найти все задачи в группе с определённым статусом.
+     * Найти все задачи в проекте с определённым статусом.
      */
-    List<Task> findByGroupIdAndStatus(UUID groupId, TaskStatus status);
+    List<Task> findByProjectIdAndStatus(UUID projectId, TaskStatus status);   // ← ИЗМЕНЕНО
 
     /**
-     * Проверить, существует ли задача с таким заголовком в группе.
+     * Проверить, существует ли задача с таким заголовком в проекте.
      */
-    boolean existsByGroupIdAndTitle(UUID groupId, String title);
+    boolean existsByProjectIdAndTitle(UUID projectId, String title);   // ← ИЗМЕНЕНО
 
-    /**
-     * Посчитать количество задач с определённым статусом.
-     */
     long countByStatus(TaskStatus status);
 
-    /**
-     * Посчитать количество задач, созданных пользователем.
-     */
     long countByCreatedBy(UUID createdBy);
 }

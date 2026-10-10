@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${project.name}">Проект</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="margin-bottom: 16px;">
+        <a class="link-back" th:href="@{/projects}">← К списку</a>
+    </div>
+
+    <div class="page-header">
+        <h1 th:text="${project.name}">Название</h1>
+        <div class="page-header-actions">
+            <a class="btn btn-secondary" th:href="@{/projects/{id}/edit(id=${project.id})}">Редактировать</a>
+
+            <form th:action="@{/projects/{id}/archive(id=${project.id})}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-secondary">В архив</button>
+            </form>
+
+            <form th:action="@{/projects/{id}/delete(id=${project.id})}" method="post" style="display:inline;"
+                  onsubmit="return confirm('Удалить проект? Это действие нельзя отменить.');">
+                <button type="submit" class="btn btn-danger">Удалить</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="project-meta" style="margin-bottom: 18px;">
+            <span class="badge"
+                  th:classappend="${'badge-' + #strings.toLowerCase(project.status)}"
+                  th:text="${project.statusName} ?: ${project.status}">STATUS</span>
+            <span th:if="${project.createdAt}"
+                  th:text="${'Создан: ' + #temporals.format(project.createdAt, 'dd.MM.yyyy HH:mm')}">—</span>
+            <span th:if="${project.updatedAt}"
+                  th:text="${'Обновлён: ' + #temporals.format(project.updatedAt, 'dd.MM.yyyy HH:mm')}">—</span>
+        </div>
+
+        <h2 style="font-size: 16px; margin: 0 0 8px 0;">Описание</h2>
+        <p th:if="${project.description != null and !project.description.isEmpty()}"
+           th:text="${project.description}"
+           style="margin: 0; white-space: pre-wrap;">Описание</p>
+        <p th:if="${project.description == null or project.description.isEmpty()}"
+           class="text-muted" style="margin: 0;">Описание не заполнено</p>
+    </div>
+
+</div>
+
+</body>
+</html>

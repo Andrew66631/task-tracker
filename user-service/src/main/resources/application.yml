@@ -57,16 +57,16 @@ jwt:
   expiration: 86400000
   cookie-name: jwt-token
 
+# ===== PROJECT SERVICE (внешний вызов) =====
+project-service:
+  base-url: http://localhost:8083
+
 # ===== ЛОГИРОВАНИЕ =====
 logging:
   level:
     com.tasktracker: DEBUG
     org.hibernate.SQL: DEBUG
     org.springframework.security: DEBUG
-
-    # ← ДОБАВЛЕНО для отладки контроллеров
-    web: DEBUG
     org.springframework.web: DEBUG
     org.springframework.web.servlet: DEBUG
     org.springframework.web.servlet.mvc.method.annotation: DEBUG
-    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE

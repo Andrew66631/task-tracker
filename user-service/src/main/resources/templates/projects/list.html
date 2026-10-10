@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Проекты</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="page-header">
+        <h1>Проекты</h1>
+        <a class="btn btn-primary" th:href="@{/projects/new}">+ Новый проект</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(projects)}" class="empty">
+        <p>У вас пока нет проектов</p>
+        <a class="btn btn-primary" th:href="@{/projects/new}">Создать первый</a>
+    </div>
+
+    <ul class="project-list" th:unless="${#lists.isEmpty(projects)}">
+        <li class="project-item" th:each="p : ${projects}">
+            <a class="project-link" th:href="@{/projects/{id}(id=${p.id})}">
+
+                <span class="project-name" th:text="${p.name}">Название</span>
+
+                <span class="project-description"
+                      th:if="${p.description != null and !p.description.isEmpty()}"
+                      th:text="${p.description}">Описание</span>
+
+                <span class="project-meta">
+                    <span class="badge"
+                          th:classappend="${'badge-' + #strings.toLowerCase(p.status)}"
+                          th:text="${p.statusName} ?: ${p.status}">STATUS</span>
+
+                    <span th:if="${p.createdAt}"
+                          th:text="${#temporals.format(p.createdAt, 'dd.MM.yyyy HH:mm')}">—</span>
+                </span>
+            </a>
+        </li>
+    </ul>
+
+</div>
+
+</body>
+</html>
